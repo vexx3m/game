@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Hill Climbing Mania</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="TemplateData/reset.css">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <script src="TemplateData/UnityProgress.javascript"></script>
+    <script src="Build/UnityLoader.js"></script>
+    <script>
+      var gameInstance = UnityLoader.instantiate("gameContainer", "Build/Build.json", { onProgress: UnityProgress });
+   
+    document.addEventListener("DOMContentLoaded", initDetect)
+
+     var device;
+     var _orientation;
+     function initDetect() {
+         device = detectDevice();
+         orientation = detectOrientation();
+         window.addEventListener("orientationchange", updateOrientationDelay);         
+         window.addEventListener('focus', onFocuse);
+        window.addEventListener('blur', onBlur);
+         updateOrientation();
+     }
+
+     function onFocuse()
+        {
+            console.log("Focuse");
+            gameInstance.SendMessage('WebGL_Control', 'BrowserFocus' , 1);
+        }
+
+        function onBlur()
+        {
+            console.log("Blur");
+            gameInstance.SendMessage('WebGL_Control', 'BrowserBlur' , 0);
+        }
+     
+     function updateOrientationDelay()
+     {
+         console.log("UpdateOrientationDelay");
+         setTimeout(updateOrientation, 100);
+     }
+
+     function updateOrientation(){
+         
+         console.log("Update Orientation, Devide: " + device)
+         //var rotate = document.getElementById("rotate");
+         
+         if(device == "windows")
+         {
+             //rotate.style.display = "none";
+             gameInstance.SendMessage('WebGL_Control', 'BrowserFocus' , 0);
+             return;
+         }
+
+         detectOrientation();
+         console.log("Update Orientation, Devide: " + _orientation)
+         if (_orientation != "horizontal") {
+             console.log("vertical")
+             //rotate.style.display = "block";
+             gameInstance.SendMessage('WebGL_Control', 'BrowserBlur' , 1);
+         } else {
+             console.log("horizontal")
+             //rotate.style.display = "none";
+             gameInstance.SendMessage('WebGL_Control', 'BrowserFocus', 0);
+         }
+     }
+     function detectOrientation() {
+         // Get the width and height of the screen in pixels
+         var screenWidth = window.innerWidth;
+         var screenHeight = window.innerHeight;
+
+         console.log("screenWidth" + screenWidth )
+         console.log("screenHeight" + screenHeight )
+         // Check if the screen is wider than it is tall (i.e. in landscape mode)
+         if (screenWidth > screenHeight) {
+             _orientation = "horizontal";
+             //return "horizontal";
+         } else {
+             _orientation = "vertical"
+             //return "vertical";
+         }
+     }
+
+     function detectDevice() {
+         // Check if the device is an Android
+         if (navigator.userAgent.toLowerCase().indexOf("android") > -1) {
+             console.log("android");
+             return "android";
+         }
+         // Check if the device is an iPhone
+         if (navigator.userAgent.toLowerCase().indexOf("iphone") > -1) {
+             console.log("iphone");
+             return "iphone";
+         }
+         if (navigator.userAgent.toLowerCase().indexOf("windows") > -1) {
+             console.log("windows");
+             return "windows";
+         }
+         // If it's neither Android nor iPhone, return "unknown"
+         return "unknown";
+     }
+     
+ </script>
+  </head>
+
+  <body>
+    <div class="webgl-wrapper">
+      <div class="aspect" style="margin-top: calc(100% / 960 * 600);"></div>
+      <div class="webgl-content">
+        <div id="gameContainer"></div>
+      </div>
+    </div>
+    
+    <script>
+      var isFullscreen = false;
+
+      document.addEventListener('keydown', function(event) {
+          if (event.which === 70) {
+              if (!isFullscreen) {
+                gameInstance.SetFullscreen(1);
+              } else {
+                gameInstance.SetFullscreen(0);
+              }
+              isFullscreen = !isFullscreen;
+          }
+      });
+    </script>
+  </body>
+</html>
