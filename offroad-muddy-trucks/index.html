@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Offroad Muddy Trucks</title>
+	<style>
+		html,
+		body {
+			background-image: url("Build/Build.jpg");
+			background-position: center; /* Center the image */
+  			background-repeat: no-repeat; /* Do not repeat the image */
+  			background-size: cover; /* Resize the background image to cover the entire container */
+			width: 100%;
+			height: 100%;
+			overflow: visible;
+			padding: 0;
+			margin: 0;
+		}
+
+		div#gameContainer {
+			background: transparent !important;
+			position: absolute;
+		}
+
+		div#gameContainer canvas {
+			position: absolute;
+		}
+
+		div#gameContainer canvas[data-pixel-art="true"] {
+			position: absolute;
+			image-rendering: optimizeSpeed;
+			image-rendering: -webkit-crisp-edges;
+			image-rendering: -moz-crisp-edges;
+			image-rendering: -o-crisp-edges;
+			image-rendering: crisp-edges;
+			image-rendering: -webkit-optimize-contrast;
+			image-rendering: optimize-contrast;
+			image-rendering: pixelated;
+			-ms-interpolation-mode: nearest-neighbor;
+		}
+		.loadingOut{ 
+				width:750px; 
+				position:fixed; 
+				left:50%; 
+				top:calc(50% - 8px);
+				transform:translate(-50%);
+				 border: 2px solid white;
+				height: 14px;
+		}
+		.centered {
+ 		 position: fixed;
+		top: 50%;
+		left: 50%;
+		margin-top: -105px;
+		margin-left: -200px;
+		width: 400px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="gameContainer">
+		<img src="TemplateData/logo.png" class="centered" >
+		<div class="loadingOut"> </div>
+		<canvas id="unity-canvas" data-pixel-art=""></canvas>
+		<script src="Build/GD_OffroadMuddyTrucks_V02M.loader.js"></script>
+		<script>
+			var canvas = document.querySelector("#unity-canvas");
+			var config = {
+				dataUrl: "Build/ad6ebcfc8b2caeddc5a3660e5ec7fc6c.data.unityweb",
+				frameworkUrl: "Build/632af560be7dec274875e708fe613e84.js.unityweb",
+				codeUrl: "Build/bad4239ff6d78e1c296cff27ff59d79d.wasm.unityweb",
+				streamingAssetsUrl: "StreamingAssets",
+				companyName: "RHM Interactive OÜ",
+				productName: "Offroad Muddy Trucks",
+				productVersion: "0.2M",
+			};
+			var scaleToFit;
+			try {
+				scaleToFit = !!JSON.parse("");
+			} catch (e) {
+				scaleToFit = true;
+			}
+			function progressHandler(progress) {
+				var percent = progress * 100 + '%';
+				canvas.style.background = 'linear-gradient(to right, white, white ' + percent + ', transparent ' + percent + ', transparent) no-repeat center';
+				canvas.style.backgroundSize = '100% 1rem';
+				canvas.style.width='750px'; 
+				canvas.style.position='fixed'; 
+				canvas.style.left='50%'; 
+				canvas.style.transform='translate(-50%)';	
+			}
+			function onResize() {
+				var container = canvas.parentElement;
+				var w;
+				var h;
+
+				if (scaleToFit) {
+					w = window.innerWidth;
+					h = window.innerHeight;
+
+					var r = 450 / 800;
+
+					if (w * r > window.innerHeight) {
+						w = Math.min(w, Math.ceil(h / r));
+					}
+					h = Math.floor(w * r);
+				} else {
+					w = 800;
+					h = 450;
+				}
+
+				container.style.width = canvas.style.width = w + "px";
+				container.style.height = canvas.style.height = h + "px";
+				container.style.top = Math.floor((window.innerHeight - h) / 2) + "px";
+				container.style.left = Math.floor((window.innerWidth - w) / 2) + "px";
+			}
+			createUnityInstance(canvas, config, progressHandler).then(function (instance) {
+				canvas = instance.Module.canvas;
+				onResize();
+			});
+			window.addEventListener('resize', onResize);
+			onResize();
+		</script>
+	</div>
+</body>
+
+</html>
